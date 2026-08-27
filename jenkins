@@ -2,11 +2,29 @@ node {
 
     stage('Clone') {
         git branch: 'main',
-            url: 'https://github.com/chennakesavanm8-cpu/aws-devops-project.git'
+            url: 'https://github.com/chennakesavanm8-cpu/aws-devops-project.git''
     }
 
     stage('Build Docker Image') {
         sh 'docker build -t aws-devops-app .'
+    }
+
+    stage('Login to ECR') {
+        sh '''
+        aws ecr get-login-password --region ap-south-1 | \
+        docker login --username AWS --password-stdin \
+        922054547493.dkr.ecr.ap-south-1.amazonaws.com
+        '''
+    }
+
+    stage('Push Image to ECR') {
+        sh '''
+        docker tag aws-devops-app:latest \
+        922054547493.dkr.ecr.ap-south-1.amazonaws.com/aws-devops-app:latest
+
+        docker push \
+        922054547493.dkr.ecr.ap-south-1.amazonaws.com/aws-devops-app:latest
+        '''
     }
 
     stage('Run Docker Container') {
