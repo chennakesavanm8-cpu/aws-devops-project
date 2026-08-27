@@ -1,0 +1,17 @@
+node {
+
+    stage('Clone') {
+        git branch: 'main',
+            url: 'https://github.com/chennakesavanm8-cpu/aws-devops-project.git'
+    }
+
+    stage('Build Docker Image') {
+        sh 'docker build -t aws-devops-app .'
+    }
+
+    stage('Run Docker Container') {
+        sh 'docker stop aws-devops-app || true'
+        sh 'docker rm aws-devops-app || true'
+        sh 'docker run -d --name aws-devops-app -p 80:80 aws-devops-app'
+    }
+}
